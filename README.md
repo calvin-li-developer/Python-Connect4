@@ -3,7 +3,7 @@ This is a very simple connect 4 game that you can launch and play between 2 play
 
 ## Game Requires:
 - Install Python 3.8
-- install numpy 
-- intsall pygame 
+- Install numpy 
+- Intsall pygame 
 
 PLAY!!!
