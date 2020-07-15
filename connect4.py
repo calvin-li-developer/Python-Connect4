@@ -108,7 +108,6 @@ def main():
             if event.type == pygame.MOUSEBUTTONDOWN:
                 pygame.draw.rect(screen, BLACK, (0, 0, guiWidth, SQUARESIZE))
 
-                # print(event.pos)
                 # Ask for Player 1 Input
 
                 if turn == 0:
