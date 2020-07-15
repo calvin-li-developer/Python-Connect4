@@ -114,8 +114,8 @@ def main():
                 if turn == 0:
                     posX = event.pos[0]
                     col = int(math.floor(posX/SQUARESIZE))
-
-                    if is_valid_location(board, col):
+                    next_turn = is_valid_location(board, col)
+                    if next_turn:
                         row = get_next_open_row(board, col)
                         drop_piece(board, row, col, 1)
 
@@ -129,8 +129,8 @@ def main():
                 else:
                     posX = event.pos[0]
                     col = int(math.floor(posX/SQUARESIZE))
-
-                    if is_valid_location(board, col):
+                    next_turn = is_valid_location(board, col)
+                    if next_turn:
                         row = get_next_open_row(board, col)
                         drop_piece(board, row, col, 2)
 
@@ -142,8 +142,9 @@ def main():
                             game_over = True
                 print_board(board)
                 draw_board(board, screen, guiHeight)
-                turn += 1
-                turn = turn % 2
+                if next_turn:
+                    turn += 1
+                    turn = turn % 2
 
                 if game_over:
                     pygame.time.wait(3200)
