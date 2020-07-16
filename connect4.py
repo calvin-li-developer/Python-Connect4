@@ -80,7 +80,7 @@ def main():
     turn = 0
 
     pygame.init()
-    pygame.display.set_caption('Connect 4 Game')
+    pygame.display.set_caption("Connect 4 Game - Player 1's Turn")
     guiWidth = COLUMN_COUNT * SQUARESIZE
     guiHeight = (ROW_COUNT+1) * SQUARESIZE
 
@@ -144,9 +144,15 @@ def main():
                 if next_turn:
                     turn += 1
                     turn = turn % 2
+                    titleString = "Connect 4 Game - Player " + \
+                        str(turn+1) + "'s Turn"
+                    pygame.display.set_caption(titleString)
 
                 if game_over:
-                    pygame.time.wait(3200)
+                    titleString = "Connect 4 Game - Player " + \
+                        str((turn+1) % 2+1) + " Wins"
+                    pygame.display.set_caption(titleString)
+                    pygame.time.wait(3500)
 
 
 if __name__ == '__main__':
