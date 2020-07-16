@@ -81,11 +81,29 @@ def quit(startMenu):
 
 
 def start(startMenu, numOfRows, numOfColumns):
-    global row_count
-    global column_count
-    row_count = numOfRows.get()
-    column_count = numOfColumns.get()
-    startMenu.destroy()
+    if numOfRows.get() == "" or numOfColumns.get() == "" or not numOfColumns.get().isnumeric() or not numOfColumns.get().isnumeric():
+        inputError = tk.Tk()
+        size = tuple(int(_)
+                     for _ in inputError.geometry().split('+')[0].split('x'))
+        x = int(inputError.winfo_screenwidth()) / 2 - size[0] / 2
+        y = int(inputError.winfo_screenheight()) / 2 - size[1] / 2
+        inputError.wm_attributes('-toolwindow', 1)
+        inputError.focus_force()
+
+        inputError.title("Error")
+        tk.Label(inputError, text="Error invalid parameters.").pack(pady=8)
+        inputError.geometry("220x100+%d+%d" % (x - 110, y - 50))
+        okBtn = tk.Button(inputError, text='OK',
+                          command=inputError.destroy)
+        okBtn.config(width=10)
+        okBtn.pack(pady=8)
+        inputError.bind("<Return>", lambda event: inputError.destroy())
+    else:
+        global row_count
+        global column_count
+        row_count = numOfRows.get()
+        column_count = numOfColumns.get()
+        startMenu.destroy()
 
 
 def main():
