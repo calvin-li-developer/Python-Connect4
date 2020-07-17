@@ -5,11 +5,13 @@ import math
 import tkinter as tk
 # pylint: disable=no-member
 
-SQUARESIZE = 100
 BLUE = (0, 0, 255)
 BLACK = (0, 0, 0)
 RED = (255, 0, 0)
 YELLOW = (255, 255, 0)
+WHITE = (255, 255, 255)
+
+SQUARESIZE = 100
 RADIUS = int(SQUARESIZE/2 - 3)
 EMPTY_SLOT = 0
 
@@ -17,7 +19,7 @@ EMPTY_SLOT = 0
 def create_board():
     global row_count
     global column_count
-    board = np.zeros((int(row_count), int(column_count)))
+    board = np.zeros((row_count, column_count))
     return board
 
 
@@ -26,11 +28,11 @@ def drop_piece(board, row, col, piece):
 
 
 def is_valid_location(board, col):
-    return board[int(row_count)-1][col] == 0
+    return board[row_count-1][col] == 0
 
 
 def get_next_open_row(board, col):
-    for r in range(int(row_count)):
+    for r in range(row_count):
         if board[r][col] == 0:
             return r
 
@@ -40,15 +42,15 @@ def print_board(board):
 
 
 def winning_move(board, piece):
-    for r in range(int(row_count)):
-        for c in range(int(column_count)):
+    for r in range(row_count):
+        for c in range(column_count):
             if board[r][c] != EMPTY_SLOT and board[r][c] == piece:
-                if c + 3 < int(column_count) and board[r][c+1] == piece and board[r][c+2] == piece and board[r][c+3] == piece:
+                if c + 3 < column_count and board[r][c+1] == piece and board[r][c+2] == piece and board[r][c+3] == piece:
                     return True
-                if r + 3 < int(row_count):
+                if r + 3 < row_count:
                     if board[r+1][c] == piece and board[r+2][c] == piece and board[r+3][c] == piece:
                         return True
-                    if (c + 3) < int(column_count) and board[r+1][c+1] == piece and board[r+2][c+2] == piece and board[r+3][c+3] == piece:
+                    if (c + 3) < column_count and board[r+1][c+1] == piece and board[r+2][c+2] == piece and board[r+3][c+3] == piece:
                         return True
                     if (c - 3) >= 0 and board[r+1][c-1] == piece and board[r+2][c-2] == piece and board[r+3][c-3] == piece:
                         return True
@@ -56,15 +58,15 @@ def winning_move(board, piece):
 
 
 def draw_board(board, screen, guiHeight):
-    for c in range(int(column_count)):
-        for r in range(int(row_count)):
+    for c in range(column_count):
+        for r in range(row_count):
             pygame.draw.rect(screen, BLUE, (c*SQUARESIZE, (r+1)
                                             * SQUARESIZE, SQUARESIZE, SQUARESIZE))
 
             pygame.draw.circle(screen, BLACK, (int(
                 c*SQUARESIZE+(SQUARESIZE/2)), int(((r) * SQUARESIZE)+SQUARESIZE+(SQUARESIZE/2))), RADIUS)
-    for c in range(int(column_count)):
-        for r in range(int(row_count)):
+    for c in range(column_count):
+        for r in range(row_count):
             if board[r][c] == 1:
                 pygame.draw.circle(screen, RED, (int(
                     c*SQUARESIZE+(SQUARESIZE/2)), guiHeight - int((r * SQUARESIZE)+(SQUARESIZE/2))), RADIUS)
@@ -101,15 +103,16 @@ def start(startMenu, numOfRows, numOfColumns):
     else:
         global row_count
         global column_count
-        row_count = numOfRows.get()
-        column_count = numOfColumns.get()
+        row_count = int(numOfRows.get())
+        column_count = int(numOfColumns.get())
         startMenu.destroy()
 
 
 def main():
     global row_count
-    row_count = 6
     global column_count
+    board_used_counter = 0
+    row_count = 6
     column_count = 7
     global game_over
     game_over = False
@@ -117,12 +120,14 @@ def main():
     tk.Label(startMenu, text="Number of Rows").pack()
 
     numOfRows = tk.Entry(startMenu)
+    numOfRows.insert(0, "6")
     numOfRows.focus_force()
     numOfRows.pack()
 
     tk.Label(startMenu, text="Number of Columns").pack()
 
     numOfColumns = tk.Entry(startMenu)
+    numOfColumns.insert(0, "7")
     numOfColumns.pack()
 
     playBtn = tk.Button(startMenu, text='Play',
@@ -151,14 +156,14 @@ def main():
 
         pygame.init()
         pygame.display.set_caption("Connect 4 Game - Player 1's Turn")
-        guiWidth = int(column_count) * SQUARESIZE
-        guiHeight = (int(row_count)+1) * SQUARESIZE
+        guiWidth = column_count * SQUARESIZE
+        guiHeight = (row_count+1) * SQUARESIZE
 
         size = (guiWidth, guiHeight)
         screen = pygame.display.set_mode(size)
         draw_board(board, screen, guiHeight)
         pygame.display.update()
-        myfont = pygame.font.SysFont("Arial", 75)
+        myfont = pygame.font.SysFont(None, 75)
 
     while not game_over:
         for event in pygame.event.get():
@@ -208,18 +213,28 @@ def main():
                             print_board(board)
                             label = myfont.render("Player 2 Wins!!", 1, YELLOW)
                             screen.blit(
-                                label, ((guiWidth/2) - len("Player 2 Wins!!")*12, 10))
+                                label, (round((guiWidth/2) - len("Player 2 Wins!!")*12), round(10)))
                             game_over = True
                 print_board(board)
                 draw_board(board, screen, guiHeight)
                 if next_turn:
+                    board_used_counter += 1
                     turn += 1
                     turn = turn % 2
                     titleString = "Connect 4 Game - Player " + \
                         str(turn+1) + "'s Turn"
                     pygame.display.set_caption(titleString)
+                    if board_used_counter == (row_count * column_count):
+                        titleString = "Connect 4 Game - Tie Game"
+                        label = myfont.render("Tie Game!", 1, WHITE)
+                        pygame.display.set_caption(titleString)
+                        screen.blit(
+                            label, (round((guiWidth/2) - len("Tie Game!")*12), round(10)))
+                        draw_board(board, screen, guiHeight)
+                        game_over = True
+                        pygame.time.wait(3500)
 
-                if game_over:
+                if game_over and board_used_counter != (row_count * column_count):
                     titleString = "Connect 4 Game - Player " + \
                         str((turn+1) % 2+1) + " Wins"
                     pygame.display.set_caption(titleString)
