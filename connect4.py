@@ -15,6 +15,9 @@ SQUARESIZE = 100
 RADIUS = int(SQUARESIZE/2 - 3)
 EMPTY_SLOT = 0
 
+row_count = 0
+column_count = 0
+game_over = True
 
 def create_board():
     global row_count
